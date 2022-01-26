@@ -1,0 +1,7 @@
+version: '3.4'
+
+services:
+  tg-proxy:
+    image: tg-proxy
+    ports:
+      - 8080:8080
