@@ -8,6 +8,7 @@ type Client interface {
 	MarkAsRead(chatID int64) error
 	ForwardMsgToMaster(fromChatID, msgID int64) error
 	JoinChat(chatID int64) error
+	MuteChat(chatID int64) error
 }
 
 type Message struct {

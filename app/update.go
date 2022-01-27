@@ -51,6 +51,10 @@ func (h *UpdatesHandler) masterCommand(msg Message) error {
 		if err != nil {
 			return fmt.Errorf("join chat: %w", err)
 		}
+		err = h.client.MuteChat(msg.ForwardedFromID)
+		if err != nil {
+			return fmt.Errorf("join chat: %w", err)
+		}
 	}
 	return nil
 }

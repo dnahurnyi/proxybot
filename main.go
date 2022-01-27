@@ -26,7 +26,6 @@ func main() {
 		log.Fatal(err)
 	}
 
-	fmt.Println("Create updates handler")
 	updatesHandler, err := app.NewUpdatesHandler(tgClient, config.MasterChatID)
 	if err != nil {
 		fmt.Println("Can't create updates handler")
