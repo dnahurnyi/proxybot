@@ -1,5 +1,5 @@
 IMAGE_NAME = tg-proxy
-COMPOSE_FILE = docker-compose.yml
+COMPOSE_FILE = docker/docker-compose.yml
 
 .PHONY: dbuild
 dbuild: 
@@ -7,7 +7,7 @@ dbuild:
 
 .PHONY: compose_run
 compose_run: 
-	docker compose --env-file ./.env up --remove-orphans
+	docker compose -f docker/docker-compose.yml up --remove-orphans
 
 .PHONY: dbuildrun
 dbuildrun: dbuild compose_run

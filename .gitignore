@@ -1,4 +1,4 @@
 .env
 .tdlib
 .vscode
-*docker-compose.yml
+docker
