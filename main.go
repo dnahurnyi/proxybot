@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"log"
 
-	"github.com/dnahurnyi/proxybot/app"
+	"github.com/dnahurnyi/proxybot/bot"
 	"github.com/dnahurnyi/proxybot/client"
 	"github.com/dnahurnyi/proxybot/opts"
 	"gopkg.in/go-playground/validator.v9"
@@ -26,7 +26,7 @@ func main() {
 		log.Fatal(err)
 	}
 
-	updatesHandler, err := app.NewUpdatesHandler(tgClient, config.MasterChatID)
+	updatesHandler, err := bot.NewUpdatesHandler(tgClient, config.MasterChatID)
 	if err != nil {
 		fmt.Println("Can't create updates handler")
 		log.Fatal(err)

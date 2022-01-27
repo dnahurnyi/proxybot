@@ -3,12 +3,12 @@ package client
 import (
 	"fmt"
 
-	"github.com/dnahurnyi/proxybot/app"
+	"github.com/dnahurnyi/proxybot/bot"
 	"github.com/zelenin/go-tdlib/client"
 )
 
 type UpdatesHandler interface {
-	Handle(msg app.Message) error
+	Handle(msg bot.Message) error
 }
 
 func (c *Client) Start(handler UpdatesHandler) error {
@@ -27,14 +27,14 @@ func (c *Client) Start(handler UpdatesHandler) error {
 	return nil
 }
 
-func transformMsg(msg *client.Message) app.Message {
+func transformMsg(msg *client.Message) bot.Message {
 	chatID := msg.ChatId
 	contentText := ""
 	if content, ok := msg.Content.(*client.MessageText); ok {
 		contentText = content.Text.Text
 	}
 
-	res := app.Message{
+	res := bot.Message{
 		ID:        msg.Id,
 		ChatID:    chatID,
 		Content:   contentText,

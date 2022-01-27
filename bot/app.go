@@ -1,4 +1,4 @@
-package app
+package bot
 
 // App is a package that handles business actions like:
 // - new message
