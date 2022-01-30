@@ -2,6 +2,7 @@ package bot
 
 import (
 	"fmt"
+	"strings"
 )
 
 type UpdatesHandler struct {
@@ -55,6 +56,22 @@ func (h *UpdatesHandler) masterCommand(msg Message) error {
 		if err != nil {
 			return fmt.Errorf("join chat: %w", err)
 		}
+	}
+	// check for command
+	if strings.Contains(msg.Content, "/list_channels") {
+		channels, err := h.client.ListChannels()
+		if err != nil {
+			return fmt.Errorf("list channels: %w", err)
+		}
+		msg := "Channels that I listen:\n------------------------\n"
+		for _, ch := range channels {
+			msg += fmt.Sprintf(" - %s\n", ch.Name)
+		}
+		err = h.client.MessageToMaster(h.masterChatID, msg)
+		if err != nil {
+			return fmt.Errorf("send message to master: %w", err)
+		}
+
 	}
 	return nil
 }

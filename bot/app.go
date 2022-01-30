@@ -9,6 +9,17 @@ type Client interface {
 	ForwardMsgToMaster(fromChatID, msgID int64) error
 	JoinChat(chatID int64) error
 	MuteChat(chatID int64) error
+	MessageToMaster(masterChatID int64, msg string) error
+	StatsClient
+}
+
+type StatsClient interface {
+	ListChannels() ([]Channel, error)
+}
+
+type Channel struct {
+	ID   int64
+	Name string
 }
 
 type Message struct {
