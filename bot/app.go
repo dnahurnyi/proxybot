@@ -7,6 +7,7 @@ package bot
 type Client interface {
 	MarkAsRead(chatID int64) error
 	ForwardMsgToMaster(fromChatID, msgID int64) error
+	ForwardMsgTo(fromChatID, msgID, toChatID int64) error
 	SubscribeToChannel(channelID int64) error
 	MessageToMaster(masterChatID int64, msg string) error
 	StatsClient

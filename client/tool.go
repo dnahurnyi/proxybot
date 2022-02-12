@@ -31,7 +31,19 @@ func (c *Client) ForwardMsgToMaster(fromChatID, msgID int64) error {
 	return nil
 }
 
-func (c *Client) JoinChat(chatID int64) error {
+func (c *Client) ForwardMsgTo(fromChatID, msgID, toChatID int64) error {
+	_, err := c.tgClient.ForwardMessages(&client.ForwardMessagesRequest{
+		ChatId:     toChatID,
+		FromChatId: fromChatID,
+		MessageIds: []int64{msgID},
+	})
+	if err != nil {
+		return fmt.Errorf("forward message to master: %w", err)
+	}
+	return nil
+}
+
+func (c *Client) joinChat(chatID int64) error {
 	_, err := c.tgClient.JoinChat(&client.JoinChatRequest{
 		ChatId: chatID,
 	})
@@ -109,4 +121,42 @@ func (c *Client) MessageToMaster(masterChatID int64, msg string) error {
 		return fmt.Errorf("send message to master: %w", err)
 	}
 	return nil
+}
+
+func (c *Client) CreateChannelForTag(tag string) (int64, error) {
+	chat, err := c.tgClient.CreateNewSupergroupChat(&client.CreateNewSupergroupChatRequest{
+		Title:       fmt.Sprintf("%s_proxybot", tag),
+		IsChannel:   true,
+		Description: fmt.Sprintf("Channel for rerouting messages from subscribed channels tagged as %s", tag),
+	})
+	if err != nil {
+		return 0, fmt.Errorf("create channel for tag %s, %w", tag, err)
+	}
+	// Don't need to create invite with ReplacePrimaryChatInviteLink since SetChatMemberStatus automatically adds user to the channel
+	_, err = c.tgClient.SetChatMemberStatus(&client.SetChatMemberStatusRequest{
+		ChatId: chat.Id,
+		MemberId: &client.MessageSenderUser{
+			UserId: c.masterChatID,
+		},
+		Status: &client.ChatMemberStatusAdministrator{
+			CustomTitle:         "master",
+			CanBeEdited:         true,
+			CanManageChat:       true,
+			CanChangeInfo:       true,
+			CanPostMessages:     true,
+			CanEditMessages:     true,
+			CanDeleteMessages:   true,
+			CanInviteUsers:      true,
+			CanRestrictMembers:  true,
+			CanPinMessages:      true,
+			CanPromoteMembers:   true,
+			CanManageVideoChats: true,
+			IsAnonymous:         true,
+		},
+	})
+	if err != nil {
+		return 0, fmt.Errorf("make master admin of %s channel, %w", tag, err)
+	}
+
+	return chat.Id, nil
 }

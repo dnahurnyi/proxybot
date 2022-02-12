@@ -55,5 +55,11 @@ func transformMsg(msg *client.Message) bot.Message {
 			res.ForwardedFromID = channelOriginMsg.ChatId
 		}
 	}
+	if msg.SenderId != nil {
+		if msg.SenderId.MessageSenderType() == client.TypeMessageSenderUser {
+			sender := msg.SenderId.(*client.MessageSenderUser)
+			res.UserID = sender.UserId
+		}
+	}
 	return res
 }
