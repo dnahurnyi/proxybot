@@ -41,7 +41,19 @@ func (c *Client) JoinChat(chatID int64) error {
 	return nil
 }
 
-func (c *Client) MuteChat(chatID int64) error {
+func (c *Client) SubscribeToChannel(channelID int64) error {
+	err := c.joinChat(channelID)
+	if err != nil {
+		return fmt.Errorf("join channel: %w", err)
+	}
+	err = c.muteChat(channelID)
+	if err != nil {
+		return fmt.Errorf("mute channel: %w", err)
+	}
+	return nil
+}
+
+func (c *Client) muteChat(chatID int64) error {
 	_, err := c.tgClient.SetChatNotificationSettings(&client.SetChatNotificationSettingsRequest{
 		ChatId: chatID,
 		NotificationSettings: &client.ChatNotificationSettings{
