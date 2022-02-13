@@ -19,15 +19,14 @@ type StatsClient interface {
 }
 
 type Repository interface {
-	TagSubscription(tag *Tag, subscriptionID int64) error
-	CreateTagForChatID(chatID int64, tag string) error
-	CreateChannelForTag(tag string, channelID int64) error
-	ListTags() ([]string, error)
-	GetChatIDsByTag(tag string) ([]int64, error)
-	ChannelForChat(chatID int64) (int64, error)
+	Transaction(func(Repository) error) error
 	SaveSubscription(sub *Subscription) error
 	GetSubscription(subID int64) (*Subscription, error)
-	Transaction(func(Repository) error) error
+	ListSubscriptions() ([]Subscription, error)
+	GetTagByName(tag string) (*Tag, error)
+	SaveTag(tag *Tag) error
+	TagSubscription(tagID uuid.UUID, subID int64) error
+	ListTags() ([]Tag, error)
 }
 
 type Channel struct {

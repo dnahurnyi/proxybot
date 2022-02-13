@@ -60,6 +60,5 @@ func repositoryPG(config opts.DB) (*postgres.Repository, error) {
 
 func postgresDSN(user, password, host, port, database string) string {
 	dsn := fmt.Sprintf("host=%s user=%s password=%s dbname=%s port=%s sslmode=require TimeZone=Europe/Kiev", host, user, password, database, port)
-	fmt.Println("Address: ", dsn)
 	return dsn
 }
