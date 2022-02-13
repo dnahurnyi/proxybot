@@ -42,9 +42,9 @@ func (h *UpdatesHandler) tagChat(command string) error {
 			return fmt.Errorf("get tag by name %s: %w", tag, err)
 		}
 		if existingTag == nil {
-			channelID, err := h.client.CreateChannelForTag(tag)
-			if err != nil {
-				return fmt.Errorf("create chat for tag %s: %w", tag, err)
+			channelID, errT := h.client.CreateChannelForTag(tag)
+			if errT != nil {
+				return fmt.Errorf("create chat for tag %s: %w", tag, errT)
 			}
 			existingTag = &Tag{
 				ID:        h.id.New(),

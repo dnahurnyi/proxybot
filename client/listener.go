@@ -18,7 +18,10 @@ func (c *Client) Start(handler UpdatesHandler) error {
 	fmt.Println("Updates processor started")
 	for update := range listener.Updates {
 		if update.GetType() == client.TypeUpdateNewMessage {
-			msg := update.(*client.UpdateNewMessage)
+			msg, ok := update.(*client.UpdateNewMessage)
+			if !ok {
+				continue
+			}
 			err := handler.Handle(transformMsg(msg.Message))
 			if err != nil {
 				return err
@@ -51,15 +54,17 @@ func transformMsg(msg *client.Message) bot.Message {
 	if msg.ForwardInfo != nil {
 		res.IsForwarded = true
 		if msg.ForwardInfo.Origin.MessageForwardOriginType() == client.TypeMessageForwardOriginChannel {
-			channelOriginMsg := msg.ForwardInfo.Origin.(*client.MessageForwardOriginChannel)
-			fmt.Printf("origin msg chatID: %d\n", channelOriginMsg.ChatId)
-			res.ForwardedFromID = channelOriginMsg.ChatId
+			if channelOriginMsg, ok := msg.ForwardInfo.Origin.(*client.MessageForwardOriginChannel); ok {
+				res.ForwardedFromID = channelOriginMsg.ChatId
+				fmt.Printf("origin msg chatID: %d\n", channelOriginMsg.ChatId)
+			}
 		}
 	}
 	if msg.SenderId != nil {
 		if msg.SenderId.MessageSenderType() == client.TypeMessageSenderUser {
-			sender := msg.SenderId.(*client.MessageSenderUser)
-			res.UserID = sender.UserId
+			if sender, ok := msg.SenderId.(*client.MessageSenderUser); ok {
+				res.UserID = sender.UserId
+			}
 		}
 	}
 	return res

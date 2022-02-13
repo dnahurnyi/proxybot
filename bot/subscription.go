@@ -90,7 +90,7 @@ func (h *UpdatesHandler) processOuterMessage(msg Message) error {
 		return fmt.Errorf("get subscriptioon by id %d: %w", msg.ChatID, err)
 	}
 	if sub != nil && sub.Tag.ChannelID != 0 {
-		err := h.client.ForwardMsgTo(msg.ChatID, msg.ID, sub.Tag.ChannelID)
+		err = h.client.ForwardMsgTo(msg.ChatID, msg.ID, sub.Tag.ChannelID)
 		if err != nil {
 			return fmt.Errorf("forward message to tag channel: %w", err)
 		}

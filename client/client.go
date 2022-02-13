@@ -40,7 +40,7 @@ func New(appID int32, apiHash string, masterChatID int64) (*Client, error) {
 
 	tdlibClient, err := client.NewClient(authorizer, logVerbosity)
 	if err != nil {
-		return nil, fmt.Errorf("create tg client: %v", err)
+		return nil, fmt.Errorf("create tg client: %w", err)
 	}
 
 	return &Client{

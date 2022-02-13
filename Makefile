@@ -1,3 +1,5 @@
+include linting.mk
+
 IMAGE_NAME = tg-proxy
 COMPOSE_FILE = docker/docker-compose.yml
 

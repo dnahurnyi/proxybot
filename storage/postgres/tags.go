@@ -1,6 +1,7 @@
 package postgres
 
 import (
+	"errors"
 	"fmt"
 
 	"github.com/dnahurnyi/proxybot/bot"
@@ -25,7 +26,7 @@ func (r *Repository) GetTagByName(name string) (*bot.Tag, error) {
 	}
 	var tag bot.Tag
 	res := r.db.Find(&tag, "name = ?", name)
-	if res.Error != nil && res.Error != gorm.ErrRecordNotFound {
+	if res.Error != nil && !errors.Is(res.Error, gorm.ErrRecordNotFound) {
 		return nil, fmt.Errorf("get tag by name: %s", name)
 	}
 	if res.RowsAffected == 0 {
@@ -38,7 +39,7 @@ func (r *Repository) GetTagByName(name string) (*bot.Tag, error) {
 func (r *Repository) getTagByID(id uuid.UUID) (*bot.Tag, error) {
 	var tag bot.Tag
 	res := r.db.Find(&tag, "id = ?", id)
-	if res.Error != nil && res.Error != gorm.ErrRecordNotFound {
+	if res.Error != nil && !errors.Is(res.Error, gorm.ErrRecordNotFound) {
 		return nil, fmt.Errorf("get tag by id: %s", id)
 	}
 	if res.RowsAffected == 0 {

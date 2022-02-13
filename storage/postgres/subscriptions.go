@@ -1,6 +1,7 @@
 package postgres
 
 import (
+	"errors"
 	"fmt"
 
 	"github.com/dnahurnyi/proxybot/bot"
@@ -24,7 +25,7 @@ func (r *Repository) GetSubscription(subID int64) (*bot.Subscription, error) {
 	}
 	var sub bot.Subscription
 	res := r.db.Preload("Tag").Find(&sub, "id = ?", subID)
-	if res.Error != nil && res.Error != gorm.ErrRecordNotFound {
+	if res.Error != nil && !errors.Is(res.Error, gorm.ErrRecordNotFound) {
 		return nil, fmt.Errorf("get subscription by channel id: %d", subID)
 	}
 	if res.RowsAffected == 0 {
