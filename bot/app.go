@@ -1,8 +1,6 @@
 package bot
 
-// App is a package that handles business actions like:
-// - new message
-//
+import uuid "github.com/satori/go.uuid"
 
 type Client interface {
 	MarkAsRead(chatID int64) error
@@ -11,10 +9,7 @@ type Client interface {
 	SubscribeToChannel(channelID int64) error
 	MessageToMaster(masterChatID int64, msg string) error
 	CreateChannelForTag(tag string) (int64, error)
-	StatsClient
-}
-
-type StatsClient interface {
+	GetChannelTitle(channelID int64) (string, error)
 	ListChannels() ([]Channel, error)
 }
 

@@ -3,17 +3,33 @@ package bot
 import (
 	"fmt"
 	"strings"
+
+	uuid "github.com/satori/go.uuid"
 )
 
 type UpdatesHandler struct {
 	client       Client
+	repo         Repository
 	masterChatID int64
+	id           IDGenerator
 }
 
-func NewUpdatesHandler(client Client, masterChatID int64) (*UpdatesHandler, error) {
+type IDGenerator interface {
+	New() uuid.UUID
+}
+
+type idGenerator struct{}
+
+func (idGenerator) New() uuid.UUID {
+	return uuid.NewV4()
+}
+
+func NewUpdatesHandler(client Client, repo Repository, masterChatID int64) (*UpdatesHandler, error) {
 	return &UpdatesHandler{
 		client:       client,
+		repo:         repo,
 		masterChatID: masterChatID,
+		id:           idGenerator{},
 	}, nil
 }
 
@@ -31,9 +47,10 @@ func (h *UpdatesHandler) Handle(msg Message) error {
 			return fmt.Errorf("handle master command: %w", err)
 		}
 	} else {
-		err := h.client.ForwardMsgToMaster(msg.ChatID, msg.ID)
+		// reroute to appropriate channel
+		err := h.processOuterMessage(msg)
 		if err != nil {
-			return fmt.Errorf("forward message to master: %w", err)
+			return fmt.Errorf("handle master command: %w", err)
 		}
 	}
 
@@ -47,31 +64,30 @@ func (h *UpdatesHandler) Handle(msg Message) error {
 
 func (h *UpdatesHandler) masterCommand(msg Message) error {
 	if msg.IsForwarded {
-		// subscribe to channel command
-		err := h.client.JoinChat(msg.ForwardedFromID)
+		err := h.saveSubscription(msg.ForwardedFromID)
 		if err != nil {
-			return fmt.Errorf("join chat: %w", err)
+			return fmt.Errorf("save subscription: %w", err)
 		}
-		err = h.client.MuteChat(msg.ForwardedFromID)
-		if err != nil {
-			return fmt.Errorf("join chat: %w", err)
-		}
+		fmt.Println("saveSubscription ended")
 	}
-	// check for command
+	// check for commands
 	if strings.Contains(msg.Content, "/list_channels") {
-		channels, err := h.client.ListChannels()
+		err := h.listSubscriptions()
 		if err != nil {
 			return fmt.Errorf("list channels: %w", err)
 		}
-		msg := "Channels that I listen:\n------------------------\n"
-		for _, ch := range channels {
-			msg += fmt.Sprintf(" - %s\n", ch.Name)
-		}
-		err = h.client.MessageToMaster(h.masterChatID, msg)
+	}
+	if strings.Contains(msg.Content, "/tag ") {
+		err := h.tagChat(msg.Content)
 		if err != nil {
-			return fmt.Errorf("send message to master: %w", err)
+			return fmt.Errorf("list channels: %w", err)
 		}
-
+	}
+	if strings.Contains(msg.Content, "/tags") {
+		err := h.listTags()
+		if err != nil {
+			return fmt.Errorf("list channels: %w", err)
+		}
 	}
 	return nil
 }

@@ -15,6 +15,7 @@ func (c *Client) Start(handler UpdatesHandler) error {
 	listener := c.tgClient.GetListener()
 	defer listener.Close()
 
+	fmt.Println("Updates processor started")
 	for update := range listener.Updates {
 		if update.GetType() == client.TypeUpdateNewMessage {
 			msg := update.(*client.UpdateNewMessage)

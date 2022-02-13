@@ -157,6 +157,18 @@ func (c *Client) CreateChannelForTag(tag string) (int64, error) {
 	if err != nil {
 		return 0, fmt.Errorf("make master admin of %s channel, %w", tag, err)
 	}
+	// TODO: allow reactions in new chat, once it will be implemented in tdlib
 
 	return chat.Id, nil
+}
+
+func (c *Client) GetChannelTitle(channelID int64) (string, error) {
+	chat, err := c.tgClient.GetChat(&client.GetChatRequest{
+		ChatId: channelID,
+	})
+	if err != nil {
+		return "", fmt.Errorf("get chat with id %d: %w", channelID, err)
+	}
+
+	return chat.Title, nil
 }
