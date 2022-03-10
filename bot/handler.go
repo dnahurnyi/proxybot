@@ -38,11 +38,11 @@ func (h *UpdatesHandler) Handle(msg Message) error {
 		// we don't need to handle pending status notifications
 		return nil
 	}
-	fmt.Printf("----------New Message----------\n")
+	fmt.Println("----------New Message----------")
 	fmt.Printf("%s\n", msg.Content)
 	if msg.ChatID == h.masterChatID {
 		// handle command from master
-		err := h.masterCommand(msg)
+		err := h.MasterCommand(msg)
 		if err != nil {
 			return fmt.Errorf("handle master command: %w", err)
 		}
@@ -62,7 +62,7 @@ func (h *UpdatesHandler) Handle(msg Message) error {
 	return nil
 }
 
-func (h *UpdatesHandler) masterCommand(msg Message) error {
+func (h *UpdatesHandler) MasterCommand(msg Message) error {
 	if msg.IsForwarded {
 		err := h.saveSubscription(msg.ForwardedFromID)
 		if err != nil {
@@ -74,7 +74,7 @@ func (h *UpdatesHandler) masterCommand(msg Message) error {
 	if strings.Contains(msg.Content, "/list_channels") {
 		err := h.listSubscriptions()
 		if err != nil {
-			return fmt.Errorf("list channels: %w", err)
+			return fmt.Errorf("list subscriptions: %w", err)
 		}
 	}
 	if strings.Contains(msg.Content, "/tag ") {

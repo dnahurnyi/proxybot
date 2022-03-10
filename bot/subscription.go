@@ -67,7 +67,7 @@ func (h *UpdatesHandler) saveSubscription(subID int64) error {
 func (h *UpdatesHandler) listSubscriptions() error {
 	subs, err := h.repo.ListSubscriptions()
 	if err != nil {
-		return fmt.Errorf("list channels: %w", err)
+		return fmt.Errorf("repository ListSubscriptions: %w", err)
 	}
 	msg := "Channels that I listen:\n------------------------\n"
 	for _, sub := range subs {
