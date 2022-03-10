@@ -17,3 +17,8 @@ dbuildrun: dbuild compose_run
 .PHONY: run
 run: 
 	go run main.go
+
+.PHONY: mocks
+mocks:
+	mockgen -destination=bot/mock/repository.go -package=mock github.com/dnahurnyi/proxybot/bot Repository
+	mockgen -destination=bot/mock/client.go -package=mock github.com/dnahurnyi/proxybot/bot Client

@@ -8,6 +8,7 @@ import (
 	"github.com/dnahurnyi/proxybot/client"
 	"github.com/dnahurnyi/proxybot/opts"
 	"github.com/dnahurnyi/proxybot/storage/postgres"
+	_ "github.com/golang/mock/mockgen/model" // no lint
 	"gopkg.in/go-playground/validator.v9"
 	gorm_postgres "gorm.io/driver/postgres"
 	"gorm.io/gorm"
