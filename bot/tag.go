@@ -80,7 +80,7 @@ func (h *UpdatesHandler) tagChat(command string) error {
 func (h *UpdatesHandler) listTags() error {
 	tags, err := h.repo.ListTags()
 	if err != nil {
-		return fmt.Errorf("can't get list of tags: %w", err)
+		return fmt.Errorf("repository.ListTags: %w", err)
 	}
 	var msg string
 	if len(tags) == 0 {

@@ -9,7 +9,7 @@ import (
 
 	bot "github.com/dnahurnyi/proxybot/bot"
 	gomock "github.com/golang/mock/gomock"
-	go_uuid "github.com/satori/go.uuid"
+	uuid "github.com/satori/go.uuid"
 )
 
 // MockRepository is a mock of Repository interface.
@@ -124,7 +124,7 @@ func (mr *MockRepositoryMockRecorder) SaveTag(arg0 interface{}) *gomock.Call {
 }
 
 // TagSubscription mocks base method.
-func (m *MockRepository) TagSubscription(arg0 go_uuid.UUID, arg1 int64) error {
+func (m *MockRepository) TagSubscription(arg0 uuid.UUID, arg1 int64) error {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "TagSubscription", arg0, arg1)
 	ret0, _ := ret[0].(error)

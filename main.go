@@ -35,7 +35,7 @@ func main() {
 		fmt.Println("Can't initiate postres repo")
 		log.Fatal(err)
 	}
-	updatesHandler, err := bot.NewUpdatesHandler(tgClient, repo, config.MasterChatID)
+	updatesHandler, err := bot.NewUpdatesHandler(tgClient, repo, config.MasterChatID, bot.NewIDGenerator())
 	if err != nil {
 		fmt.Println("Can't create updates handler")
 		log.Fatal(err)

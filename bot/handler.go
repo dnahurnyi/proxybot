@@ -20,16 +20,20 @@ type IDGenerator interface {
 
 type idGenerator struct{}
 
+func NewIDGenerator() IDGenerator {
+	return idGenerator{}
+}
+
 func (idGenerator) New() uuid.UUID {
 	return uuid.NewV4()
 }
 
-func NewUpdatesHandler(client Client, repo Repository, masterChatID int64) (*UpdatesHandler, error) {
+func NewUpdatesHandler(client Client, repo Repository, masterChatID int64, idGen IDGenerator) (*UpdatesHandler, error) {
 	return &UpdatesHandler{
 		client:       client,
 		repo:         repo,
 		masterChatID: masterChatID,
-		id:           idGenerator{},
+		id:           idGen,
 	}, nil
 }
 
@@ -80,13 +84,13 @@ func (h *UpdatesHandler) MasterCommand(msg Message) error {
 	if strings.Contains(msg.Content, "/tag ") {
 		err := h.tagChat(msg.Content)
 		if err != nil {
-			return fmt.Errorf("list channels: %w", err)
+			return fmt.Errorf("tag subscription: %w", err)
 		}
 	}
 	if strings.Contains(msg.Content, "/tags") {
 		err := h.listTags()
 		if err != nil {
-			return fmt.Errorf("list channels: %w", err)
+			return fmt.Errorf("list tags: %w", err)
 		}
 	}
 	return nil
