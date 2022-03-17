@@ -42,24 +42,9 @@ func (h *UpdatesHandler) tagChat(command string) error {
 			return fmt.Errorf("get tag by name %s: %w", tag, err)
 		}
 		if existingTag == nil {
-			channelID, errT := h.client.CreateChannelForTag(tag)
-			if errT != nil {
-				return fmt.Errorf("create chat for tag %s: %w", tag, errT)
-			}
-			existingTag = &Tag{
-				ID:        h.id.New(),
-				Name:      tag,
-				ChannelID: channelID,
-			}
-			err = repo.SaveTag(existingTag)
+			existingTag, err = h.createChannelForTag(repo, tag)
 			if err != nil {
-				return fmt.Errorf("save tag %s: %w", tag, err)
-			}
-
-			// TODO: make _proxybot sufix constant or env variable
-			err = h.client.MessageToMaster(h.masterChatID, fmt.Sprintf("New channel %s_proxybot for your tag  created, you have been invited there as admin", tag))
-			if err != nil {
-				return fmt.Errorf("send message to master: %w", err)
+				return fmt.Errorf("create channel for tag %s: %w", tag, err)
 			}
 		}
 
@@ -75,6 +60,30 @@ func (h *UpdatesHandler) tagChat(command string) error {
 		return nil
 	})
 	return err
+}
+
+func (h *UpdatesHandler) createChannelForTag(repo Repository, tagName string) (*Tag, error) {
+	channelID, err := h.client.CreateChannelForTag(tagName)
+	if err != nil {
+		return nil, fmt.Errorf("create chat for tag %s: %w", tagName, err)
+	}
+	newTag := &Tag{
+		ID:        h.id.New(),
+		Name:      tagName,
+		ChannelID: channelID,
+	}
+	err = repo.SaveTag(newTag)
+	if err != nil {
+		return nil, fmt.Errorf("save tag %s: %w", tagName, err)
+	}
+
+	// TODO: make _proxybot sufix constant or env variable
+	err = h.client.MessageToMaster(h.masterChatID, fmt.Sprintf("New channel %s_proxybot for your tag  created, you have been invited there as admin", tagName))
+	if err != nil {
+		return nil, fmt.Errorf("send message to master: %w", err)
+	}
+
+	return newTag, nil
 }
 
 func (h *UpdatesHandler) listTags() error {

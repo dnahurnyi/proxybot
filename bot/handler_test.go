@@ -467,8 +467,10 @@ func Test_MasterCommand_tag(t *testing.T) {
 		gotErr := h.MasterCommand(msg)
 		require.Equal(t,
 			fmt.Errorf("tag subscription: %w",
-				fmt.Errorf("create chat for tag %s: %w", tagName,
-					clientErr,
+				fmt.Errorf("create channel for tag %s: %w", tagName,
+					fmt.Errorf("create chat for tag %s: %w", tagName,
+						clientErr,
+					),
 				),
 			), gotErr,
 		)
@@ -497,7 +499,9 @@ func Test_MasterCommand_tag(t *testing.T) {
 		gotErr := h.MasterCommand(msg)
 		require.Equal(t,
 			fmt.Errorf("tag subscription: %w",
-				fmt.Errorf("save tag %s: %w", tagName, repoErr),
+				fmt.Errorf("create channel for tag %s: %w", tagName,
+					fmt.Errorf("save tag %s: %w", tagName, repoErr),
+				),
 			), gotErr,
 		)
 	})
@@ -530,12 +534,14 @@ func Test_MasterCommand_tag(t *testing.T) {
 		gotErr := h.MasterCommand(msg)
 		require.Equal(t,
 			fmt.Errorf("tag subscription: %w",
-				fmt.Errorf("send message to master: %w", clientErr),
+				fmt.Errorf("create channel for tag %s: %w", tagName,
+					fmt.Errorf("send message to master: %w", clientErr),
+				),
 			), gotErr,
 		)
 	})
 
-	t.Run("tag_with_existing_tag_success", func(t *testing.T) {
+	t.Run("can't_tag_subscription_because_of_repo_err", func(t *testing.T) {
 		t.Parallel()
 
 		ctrl := gomock.NewController(t)
@@ -559,7 +565,7 @@ func Test_MasterCommand_tag(t *testing.T) {
 		)
 	})
 
-	t.Run("tag_with_existing_tag_success", func(t *testing.T) {
+	t.Run("tag_with_existing_tag_but_can't_notify_master", func(t *testing.T) {
 		t.Parallel()
 
 		ctrl := gomock.NewController(t)
