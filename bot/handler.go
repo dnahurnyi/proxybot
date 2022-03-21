@@ -72,7 +72,6 @@ func (h *UpdatesHandler) MasterCommand(msg Message) error {
 		if err != nil {
 			return fmt.Errorf("save subscription: %w", err)
 		}
-		fmt.Println("saveSubscription ended")
 	}
 	// check for commands
 	if strings.Contains(msg.Content, "/list_channels") {

@@ -13,6 +13,11 @@ func (r *Repository) SaveSubscription(sub *bot.Subscription) error {
 		return fmt.Errorf("subscription input is empty")
 	}
 
+	if len(sub.Name) > 150 {
+		// Postgres limitation
+		sub.Name = sub.Name[:150]
+	}
+
 	if err := r.db.Create(sub).Error; err != nil {
 		return fmt.Errorf("create subscription record: %w", err)
 	}

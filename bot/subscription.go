@@ -1,52 +1,53 @@
 package bot
 
 import (
+	"errors"
 	"fmt"
-	"strings"
 )
 
 const cantSubscribe = "can't subscribe to channel "
 
+var PrivateChannel = fmt.Errorf("can't subscribe, channel is private")
+
 func (h *UpdatesHandler) saveSubscription(subID int64) error {
-	sub := Subscription{
-		ID: subID,
-	}
 	err := h.repo.Transaction(func(repo Repository) (err error) {
 		existingSub, err := repo.GetSubscription(subID)
 		if err != nil {
-			return fmt.Errorf("get subscription: %w", err)
+			return fmt.Errorf("get subscription by id %d: %w", subID, err)
 		}
 		if existingSub != nil {
 			err = h.client.MessageToMaster(h.masterChatID, fmt.Sprintf("Channel with id %d already subscribed", subID))
 			if err != nil {
 				return fmt.Errorf("send message to master: %w", err)
 			}
-			return
+			return nil
 		}
 		subName, err := h.client.GetChannelTitle(subID)
 		if err != nil {
 			return fmt.Errorf("get subscription name by id %d: %w", subID, err)
 		}
-		if len(subName) > 150 {
-			// DB limitation
-			subName = subName[:150]
-		}
-		sub.Name = subName
-		err = repo.SaveSubscription(&sub)
+
+		err = repo.SaveSubscription(&Subscription{
+			ID:   subID,
+			Name: subName,
+		})
 		if err != nil {
 			return fmt.Errorf("repo save subscription: %w", err)
 		}
+
 		err = h.client.SubscribeToChannel(subID)
 		if err != nil {
-			if strings.Contains(err.Error(), "400 CHANNEL_PRIVATE") {
-				err = h.client.MessageToMaster(h.masterChatID, fmt.Sprintf("Channel %s is private, can't subscribe", subName))
-				if err != nil {
-					return fmt.Errorf("send message to master: %w", err)
+			if errors.Is(err, PrivateChannel) {
+				errM := h.client.MessageToMaster(h.masterChatID, "Channel is private, can't subscribe")
+				if errM != nil {
+					return fmt.Errorf("send message to master: %w", errM)
 				}
-				return fmt.Errorf(cantSubscribe + subName)
+				// return error anyway to cancel transaction
+				return err
 			}
 			return fmt.Errorf("subscribe to channel: %w", err)
 		}
+
 		err = h.client.MessageToMaster(h.masterChatID, fmt.Sprintf("Subscribed to %s", subName))
 		if err != nil {
 			return fmt.Errorf("send message to master: %w", err)
@@ -54,9 +55,7 @@ func (h *UpdatesHandler) saveSubscription(subID int64) error {
 		return nil
 	})
 	if err != nil {
-		if strings.Contains(err.Error(), cantSubscribe) {
-			// TODO: log
-			fmt.Println(err)
+		if errors.Is(err, PrivateChannel) {
 			return nil
 		}
 		return err

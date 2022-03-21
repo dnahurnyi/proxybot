@@ -3,6 +3,7 @@ package client
 import (
 	"fmt"
 	"math"
+	"strings"
 
 	"github.com/dnahurnyi/proxybot/bot"
 	"github.com/zelenin/go-tdlib/client"
@@ -56,6 +57,9 @@ func (c *Client) joinChat(chatID int64) error {
 func (c *Client) SubscribeToChannel(channelID int64) error {
 	err := c.joinChat(channelID)
 	if err != nil {
+		if strings.Contains(err.Error(), "400 CHANNEL_PRIVATE") {
+			err = bot.PrivateChannel
+		}
 		return fmt.Errorf("join channel: %w", err)
 	}
 	err = c.muteChat(channelID)
