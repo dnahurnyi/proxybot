@@ -5,9 +5,7 @@ import (
 	"fmt"
 )
 
-const cantSubscribe = "can't subscribe to channel "
-
-var PrivateChannel = fmt.Errorf("can't subscribe, channel is private")
+var ErrPrivateChannel = fmt.Errorf("can't subscribe, channel is private")
 
 func (h *UpdatesHandler) saveSubscription(subID int64) error {
 	err := h.repo.Transaction(func(repo Repository) (err error) {
@@ -37,7 +35,7 @@ func (h *UpdatesHandler) saveSubscription(subID int64) error {
 
 		err = h.client.SubscribeToChannel(subID)
 		if err != nil {
-			if errors.Is(err, PrivateChannel) {
+			if errors.Is(err, ErrPrivateChannel) {
 				errM := h.client.MessageToMaster(h.masterChatID, "Channel is private, can't subscribe")
 				if errM != nil {
 					return fmt.Errorf("send message to master: %w", errM)
@@ -55,7 +53,7 @@ func (h *UpdatesHandler) saveSubscription(subID int64) error {
 		return nil
 	})
 	if err != nil {
-		if errors.Is(err, PrivateChannel) {
+		if errors.Is(err, ErrPrivateChannel) {
 			return nil
 		}
 		return err
@@ -86,7 +84,7 @@ func (h *UpdatesHandler) listSubscriptions() error {
 func (h *UpdatesHandler) processOuterMessage(msg Message) error {
 	sub, err := h.repo.GetSubscription(msg.ChatID)
 	if err != nil {
-		return fmt.Errorf("get subscriptioon by id %d: %w", msg.ChatID, err)
+		return fmt.Errorf("get subscription by id %d: %w", msg.ChatID, err)
 	}
 	if sub != nil && sub.Tag.ChannelID != 0 {
 		err = h.client.ForwardMsgTo(msg.ChatID, msg.ID, sub.Tag.ChannelID)

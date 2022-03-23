@@ -58,7 +58,7 @@ func (c *Client) SubscribeToChannel(channelID int64) error {
 	err := c.joinChat(channelID)
 	if err != nil {
 		if strings.Contains(err.Error(), "400 CHANNEL_PRIVATE") {
-			err = bot.PrivateChannel
+			err = bot.ErrPrivateChannel
 		}
 		return fmt.Errorf("join channel: %w", err)
 	}

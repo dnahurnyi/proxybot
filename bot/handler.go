@@ -54,7 +54,7 @@ func (h *UpdatesHandler) Handle(msg Message) error {
 		// reroute to appropriate channel
 		err := h.processOuterMessage(msg)
 		if err != nil {
-			return fmt.Errorf("handle master command: %w", err)
+			return fmt.Errorf("process outer message: %w", err)
 		}
 	}
 
