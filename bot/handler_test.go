@@ -39,7 +39,7 @@ func Test_Handle_outer_message(t *testing.T) {
 		},
 	}
 
-	msg := bot.Message{
+	msg := &bot.Message{
 		ChatID:          23,
 		ForwardedFromID: subID,
 	}
@@ -166,7 +166,7 @@ func Test_Handle_MasterCommand(t *testing.T) {
 	t.Run("empty_master_command", func(t *testing.T) {
 		t.Parallel()
 
-		msg := bot.Message{
+		msg := &bot.Message{
 			ChatID:          masterChatID,
 			ForwardedFromID: subID,
 		}
@@ -188,7 +188,7 @@ func Test_Handle_MasterCommand(t *testing.T) {
 	t.Run("empty_master_command_client_error", func(t *testing.T) {
 		t.Parallel()
 
-		msg := bot.Message{
+		msg := &bot.Message{
 			ChatID:          masterChatID,
 			ForwardedFromID: subID,
 			Content:         "/tags",
@@ -215,7 +215,7 @@ func Test_Handle_MasterCommand(t *testing.T) {
 	t.Run("empty_master_command_ack_failure", func(t *testing.T) {
 		t.Parallel()
 
-		msg := bot.Message{
+		msg := &bot.Message{
 			ChatID:          masterChatID,
 			ForwardedFromID: subID,
 		}
@@ -237,7 +237,7 @@ func Test_Handle_MasterCommand(t *testing.T) {
 	t.Run("pending_state_msg", func(t *testing.T) {
 		t.Parallel()
 
-		msg := bot.Message{
+		msg := &bot.Message{
 			IsPendingStatus: true,
 		}
 

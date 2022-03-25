@@ -37,7 +37,10 @@ func NewUpdatesHandler(client Client, repo Repository, masterChatID int64, idGen
 	}, nil
 }
 
-func (h *UpdatesHandler) Handle(msg Message) error {
+func (h *UpdatesHandler) Handle(msg *Message) error {
+	if msg == nil {
+		return nil
+	}
 	if msg.IsPendingStatus {
 		// we don't need to handle pending status notifications
 		return nil
@@ -66,7 +69,10 @@ func (h *UpdatesHandler) Handle(msg Message) error {
 	return nil
 }
 
-func (h *UpdatesHandler) MasterCommand(msg Message) error {
+func (h *UpdatesHandler) MasterCommand(msg *Message) error {
+	if msg == nil {
+		return nil
+	}
 	if msg.IsForwarded {
 		err := h.saveSubscription(msg.ForwardedFromID)
 		if err != nil {

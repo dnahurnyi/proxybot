@@ -8,7 +8,7 @@ import (
 )
 
 type UpdatesHandler interface {
-	Handle(msg bot.Message) error
+	Handle(msg *bot.Message) error
 }
 
 func (c *Client) Start(handler UpdatesHandler) error {
@@ -31,14 +31,18 @@ func (c *Client) Start(handler UpdatesHandler) error {
 	return nil
 }
 
-func transformMsg(msg *client.Message) bot.Message {
+// TODO: cover with test
+func transformMsg(msg *client.Message) *bot.Message {
+	if msg == nil {
+		return nil
+	}
 	chatID := msg.ChatId
 	contentText := ""
 	if content, ok := msg.Content.(*client.MessageText); ok {
 		contentText = content.Text.Text
 	}
 
-	res := bot.Message{
+	res := &bot.Message{
 		ID:        msg.Id,
 		ChatID:    chatID,
 		Content:   contentText,
@@ -53,10 +57,9 @@ func transformMsg(msg *client.Message) bot.Message {
 	}
 	if msg.ForwardInfo != nil {
 		res.IsForwarded = true
-		if msg.ForwardInfo.Origin.MessageForwardOriginType() == client.TypeMessageForwardOriginChannel {
+		if msg.ForwardInfo.Origin != nil && msg.ForwardInfo.Origin.MessageForwardOriginType() == client.TypeMessageForwardOriginChannel {
 			if channelOriginMsg, ok := msg.ForwardInfo.Origin.(*client.MessageForwardOriginChannel); ok {
 				res.ForwardedFromID = channelOriginMsg.ChatId
-				fmt.Printf("origin msg chatID: %d\n", channelOriginMsg.ChatId)
 			}
 		}
 	}

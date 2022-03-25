@@ -19,7 +19,7 @@ func Test_MasterCommand_listSubscriptions(t *testing.T) {
 
 	var masterChatID int64
 
-	msg := bot.Message{
+	msg := &bot.Message{
 		ID:      23,
 		ChatID:  23,
 		Content: "/list_channels",
@@ -117,7 +117,7 @@ func Test_MasterCommand_subscribe(t *testing.T) {
 	subID := int64(23)
 	subName := "sub1"
 
-	msg := bot.Message{
+	msg := &bot.Message{
 		IsForwarded:     true,
 		ForwardedFromID: subID,
 	}

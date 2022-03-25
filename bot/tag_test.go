@@ -19,7 +19,7 @@ func Test_MasterCommand_listTags(t *testing.T) {
 
 	var masterChatID int64
 
-	msg := bot.Message{
+	msg := &bot.Message{
 		ID:      23,
 		ChatID:  23,
 		Content: "/tags",
@@ -125,7 +125,7 @@ func Test_MasterCommand_tag(t *testing.T) {
 
 	var masterChatID int64
 
-	msg := bot.Message{
+	msg := &bot.Message{
 		Content: "/tag 24 #tag1",
 	}
 
@@ -217,7 +217,7 @@ func Test_MasterCommand_tag(t *testing.T) {
 		h, err := bot.NewUpdatesHandler(client, repo, masterChatID, nil)
 		require.Nil(t, err)
 		badMsg := "/tag 24"
-		gotErr := h.MasterCommand(bot.Message{
+		gotErr := h.MasterCommand(&bot.Message{
 			Content: badMsg,
 		})
 		require.Equal(t,
@@ -240,7 +240,7 @@ func Test_MasterCommand_tag(t *testing.T) {
 		h, err := bot.NewUpdatesHandler(client, repo, masterChatID, nil)
 		require.Nil(t, err)
 		badMsg := "/tag badSubID #tag1"
-		gotErr := h.MasterCommand(bot.Message{
+		gotErr := h.MasterCommand(&bot.Message{
 			Content: badMsg,
 		})
 		require.Equal(t,

@@ -81,7 +81,10 @@ func (h *UpdatesHandler) listSubscriptions() error {
 	return nil
 }
 
-func (h *UpdatesHandler) processOuterMessage(msg Message) error {
+func (h *UpdatesHandler) processOuterMessage(msg *Message) error {
+	if msg == nil {
+		return nil
+	}
 	sub, err := h.repo.GetSubscription(msg.ChatID)
 	if err != nil {
 		return fmt.Errorf("get subscription by id %d: %w", msg.ChatID, err)
