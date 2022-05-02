@@ -1,6 +1,6 @@
 module github.com/dnahurnyi/proxybot
 
-go 1.17
+go 1.18
 
 require (
 	github.com/go-playground/universal-translator v0.18.0 // indirect

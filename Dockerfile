@@ -2,7 +2,7 @@
 # STEP 1 build go binary
 ############################
 
-FROM golang:1.17-alpine AS builder
+FROM golang:1.18-alpine AS builder
 COPY --from=n826/tdlib:v1 /usr/local/include/td /usr/local/include/td
 COPY --from=n826/tdlib:v1 /usr/local/lib/libtd* /usr/local/lib/
 COPY --from=n826/tdlib:v1 /usr/lib/libssl.a /usr/local/lib/libssl.a
