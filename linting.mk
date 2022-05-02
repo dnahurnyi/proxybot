@@ -5,7 +5,7 @@ OSNAME = $(shell go env GOOS)
 ARCH = $(shell go env GOARCH)
 TMP_DIR = /tmp/dnahurnyi
 
-LINT_VERSION = 1.44.0
+LINT_VERSION = 1.45.0
 
 LINT_DIR = $(TMP_DIR)/golangci-lint/$(LINT_VERSION)
 LINT_BIN = $(LINT_DIR)/golangci-lint
