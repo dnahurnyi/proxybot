@@ -1,4 +1,4 @@
-#Proxybot
+# Proxybot
 
 A bot that can be used by you to consume content from the Telegram. This bot can join channels and groups instead of you and then forward messages from there to you. This way you can consume needed information from the specific channels in the aggregated form without even subscribing to those channels.
 
